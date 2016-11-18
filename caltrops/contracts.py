@@ -1,33 +1,39 @@
 from exceptions import InputContractError, OutputContractError
 
 
-class input_contract:
-    def __init__(self, contract):
-        self.contract = contract
+class input_output_contract:
+    def __init__(self, input_contract, output_contract):
+        self.input_contract = input_contract
+        self.output_contract = output_contract
 
     def __call__(self, f):
         def wrapped(*args, **kwargs):
             try:
-                self.contract(*args, **kwargs)
+                self.input_contract(*args, **kwargs)
             except AssertionError as e:
                 raise InputContractError(e.message)
-            return f(*args, **kwargs)
-        return wrapped
 
-
-class output_contract:
-    def __init__(self, contract):
-        self.contract = contract
-
-    def __call__(self, f):
-        def wrapped(*args, **kwargs):
             output = f(*args, **kwargs)
+
             try:
-                self.contract(output)
+                self.output_contract(output)
             except AssertionError as e:
                 raise OutputContractError(e.message)
+
             return output
         return wrapped
+
+
+def null_contract(*args, **kwargs):
+    return
+
+
+def input_contract(input_contract):
+    return input_output_contract(input_contract, null_contract)
+
+
+def output_contract(output_contract):
+    return input_output_contract(null_contract, output_contract)
 
 
 def all_contracts(*contracts):
