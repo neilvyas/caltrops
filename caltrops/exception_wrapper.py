@@ -1,3 +1,4 @@
+from builtins import str as text
 from collections import namedtuple
 
 
@@ -10,5 +11,5 @@ def exception_wrapper(f):
             return f(*args, **kwargs)
         except Exception as e:
             # Can also log the args.
-            return Error(type(e).__name__, e.message)
+            return Error(type(e).__name__, text(e))
     return wrapped

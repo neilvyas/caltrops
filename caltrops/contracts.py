@@ -69,7 +69,7 @@ def any_contract(*contracts):
             try:
                 contract(*args, **kwargs)
             except AssertionError as e:
-                messages.append(e.message)
+                messages.append(text(e))
         else:
             message = "\n".join(messages)
             raise type(e)(message)
