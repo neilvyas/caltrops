@@ -1,4 +1,5 @@
-from exceptions import InputContractError, OutputContractError
+from builtins import str as text
+from .exceptions import InputContractError, OutputContractError
 
 
 class input_output_contract:
@@ -11,29 +12,29 @@ class input_output_contract:
             try:
                 self.input_contract(*args, **kwargs)
             except AssertionError as e:
-                raise InputContractError(e.message)
+                raise InputContractError(text(e))
 
             output = f(*args, **kwargs)
 
             try:
                 self.output_contract(output)
             except AssertionError as e:
-                raise OutputContractError(e.message)
+                raise OutputContractError(text(e))
 
             return output
         return wrapped
 
 
-def null_contract(*args, **kwargs):
+def _null_contract(*args, **kwargs):
     return
 
 
 def input_contract(input_contract):
-    return input_output_contract(input_contract, null_contract)
+    return input_output_contract(input_contract, _null_contract)
 
 
 def output_contract(output_contract):
-    return input_output_contract(null_contract, output_contract)
+    return input_output_contract(_null_contract, output_contract)
 
 
 def all_contracts(*contracts):
